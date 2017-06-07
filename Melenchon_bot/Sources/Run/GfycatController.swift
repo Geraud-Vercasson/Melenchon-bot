@@ -45,7 +45,7 @@ func getYoutubeGif (videoId: String, startDate: Double, endDate: Double, caption
             let gifJson = try JSON(node: [
                 "fetchUrl":"https://www.youtube.com/watch?v=" + videoId,
                 "cut" : ["duration":duration,"start":startDate],
-                "captions": [["text":text, "fontHeight": 40]]])
+                "captions": [["text":text.folding(options: .diacriticInsensitive, locale: .current), "fontHeight": 40]]])
             
             
             
