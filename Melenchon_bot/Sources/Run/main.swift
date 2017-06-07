@@ -162,9 +162,10 @@ if let newToken = refreshToken() {
     
     if let punchlines = bestCaptions.first?.subtitlesWithWord(word: searchedText) {   // extraction des sous-titres contenant le mot cherché dans le premier Caption de bestCaptions
         
-        print(getYoutubeGif(videoId: (bestCaptions.first?.videoId)!, startDate: (punchlines.first?.startDateNumber())!, endDate: (punchlines.first?.endDateNumber())!, text: (punchlines.first?.text)!))  //getyoutubeGif sur la première "punchline"
+       print(getYoutubeGif(videoId: (bestCaptions.first?.videoId)!, startDate: (punchlines.first?.startDateNumber())!, endDate: (punchlines.first?.endDateNumber())!, text: (punchlines.first?.text)!))  //getyoutubeGif sur la première "punchline"
         
-        
+
+        print(getYoutubeGif(videoId: (bestCaptions.first?.videoId)!, startDate: (punchlines.last?.startDateNumber())!, endDate: (punchlines.last?.endDateNumber())!, text: (punchlines.last?.text)!)) //getyoutubeGif sur la dernière "punchline"
         
         
     }

@@ -113,10 +113,11 @@ class Subtitle {
     
     public func startDateNumber () -> Double {
         
-        var date: [String] = endDate.components(separatedBy: ":")
-        if let heure = Double(date.removeFirst()), let minute = Double(date.removeFirst()), let seconde = Double(date.removeFirst()){
+        let date: [String] = startDate.components(separatedBy: ":")
+        if let heure = Double(date[0]), let minute = Double(date[1]), let seconde = Double(date[2].replacingOccurrences(of: ",", with: ".")) {
             
             return heure * 3600 + minute * 60 + seconde
+            
             
         }
         
@@ -125,11 +126,11 @@ class Subtitle {
     
     public func endDateNumber () -> Double {
         
-        var date: [String] = endDate.components(separatedBy: ":")
-        if let heure = Double(date.removeFirst()), let minute = Double(date.removeFirst()), let seconde = Double(date.removeFirst()){
-        
-        return heure * 3600 + minute * 60 + seconde
-    
+        let date: [String] = endDate.components(separatedBy: ":")
+        if let heure = Double(date[0]), let minute = Double(date[1]), let seconde = Double(date[2].replacingOccurrences(of: ",", with: ".")) {
+            
+            return heure * 3600 + minute * 60 + seconde
+            
         }
         
         return 0
