@@ -97,14 +97,14 @@ func getCaptionIds(videoId: String) -> [String]? {
     return nil
 }
 
-func getVideoIds(search: String) -> [String]? {
+func getVideoIds(search: String, maxResults: Int = 10) -> [String]? {
     do {
         let response = try drop.client.get("https://www.googleapis.com/youtube/v3/search",
                                            query: [
                                             "q":search,
                                             "part":"snippet",
                                             "key": API_Key,
-                                            "maxResults":"25",
+                                            "maxResults":maxResults,
                                             "type":"video",
                                             "videoCaption":"closedCaption"
             ])
@@ -128,7 +128,7 @@ func getVideoIds(search: String) -> [String]? {
 // Call methods
 if let newToken = refreshToken() {
     Access_token = newToken
-    let searchedText = "climatique"
+    let searchedText = "hypocrite"
     var bestCaptions = [Caption]()
     if let videoIdArray = getVideoIds(search: searchedText){
         
@@ -152,13 +152,26 @@ if let newToken = refreshToken() {
             }
         })
     }
-
-bestCaptions = bestCaptions.sorted(by: { (caption1, caption2) -> Bool in
-    caption1.countOfWord(searchedText) > caption2.countOfWord(searchedText)
-
-})
-
-    print(bestCaptions.first?.videoId ?? "")
+    
+    bestCaptions = bestCaptions.sorted(by: { (caption1, caption2) -> Bool in
+        caption1.countOfWord(searchedText) > caption2.countOfWord(searchedText)
+        
+    })
+    
+    print(bestCaptions.first?.videoId ?? "no match")
+    
+    if let punchlines = bestCaptions.first?.subtitlesWithWord(word: searchedText) {   // extraction des sous-titres contenant le mot cherché dans le premier Caption de bestCaptions
+        
+        print(getYoutubeGif(videoId: (bestCaptions.first?.videoId)!, startDate: (punchlines.first?.startDateNumber())!, endDate: (punchlines.first?.endDateNumber())!, text: (punchlines.first?.text)!))  //getyoutubeGif sur la première "punchline"
+        
+        
+        
+        
+    }
+    
+    
+    
+    
 }
 
 

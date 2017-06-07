@@ -38,7 +38,7 @@ class Caption {
                 
                 guard let time = lines.getOrNil(index: lastIndex+1) else {return result}
                 guard let startDate = time.components(separatedBy: " --> ").first, let endDate = time.components(separatedBy: " --> ").last else {return result}
-            
+                
                 
                 let text = lines[(lastIndex + 2)..<min(i, lines.count)]
                 
@@ -69,7 +69,7 @@ class Caption {
             
             if subtitle.text.lowercased().contains(word.lowercased()){
                 
-                let wordInText = subtitle.text.components(separatedBy: word).count - 1
+                let wordInText = subtitle.text.lowercased().components(separatedBy: word.lowercased()).count - 1
                 
                 count = count + wordInText
                 
@@ -77,16 +77,20 @@ class Caption {
             
         }
         return count
-
+        
+        
         
     }
     
     public func subtitlesWithWord (word: String) -> [Subtitle] {
-    
+        
         return subtitles.filter { (subtitle) -> Bool in
             subtitle.text.lowercased().contains(word.lowercased())
         }
     }
+    
+    
+    
     
 }
 
@@ -105,6 +109,30 @@ class Subtitle {
         self.endDate = endDate
         self.text = text
         
+    }
+    
+    public func startDateNumber () -> Double {
         
+        var date: [String] = endDate.components(separatedBy: ":")
+        if let heure = Double(date.removeFirst()), let minute = Double(date.removeFirst()), let seconde = Double(date.removeFirst()){
+            
+            return heure * 3600 + minute * 60 + seconde
+            
+        }
+        
+        return 0
+    }
+    
+    public func endDateNumber () -> Double {
+        
+        var date: [String] = endDate.components(separatedBy: ":")
+        if let heure = Double(date.removeFirst()), let minute = Double(date.removeFirst()), let seconde = Double(date.removeFirst()){
+        
+        return heure * 3600 + minute * 60 + seconde
+    
+        }
+        
+        return 0
     }
 }
+
