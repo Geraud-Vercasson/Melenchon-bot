@@ -19,7 +19,19 @@ import Foundation
 /// .run() runs the Droplet's commands,
 /// if no command is given, it will default to "serve"
 
+
+
+
+
 // Declaring vars
+//  let Client_id = ""
+//  let Client_secret = ""
+//  let Refresh_token = ""
+//  let API_Key = ""
+//  var Access_token = ""
+//  let gfycatClientId = ""
+//  let gfycatClientSecret = ""
+//   let slackBotToken = ""
 
 let tfmt = "srt"
 
