@@ -88,7 +88,9 @@ func getCaptionIds(videoId: String) -> [String]? {
             
             return json["items"]?.array?
                 .filter{ $0["id"]?.string != nil }
-                .map{ ($0["id"]?.string)! }        }
+                .map{ ($0["id"]?.string)! }
+        
+        }
         
     } catch {
         // will print error catched in try calls
@@ -128,9 +130,9 @@ func getVideoIds(search: String, maxResults: Int = 10) -> [String]? {
 // Call methods
 if let newToken = refreshToken() {
     Access_token = newToken
-    let searchedText = "taisez-vous"
+    let searchedText = "république"
     var bestCaptions = [Caption]()
-    if let videoIdArray = getVideoIds(search: searchedText){
+    if let videoIdArray = getVideoIds(search: "Melenchon",maxResults: 25){
         
         videoIdArray.forEach({ (my_videoId) in
             
@@ -143,9 +145,14 @@ if let newToken = refreshToken() {
                         
                         if let caption = Caption(id: captionId, subtitleRaw: captionString, videoId: my_videoId){
                             
-                            bestCaptions.append(caption)
+                            let numberOfIteration = caption.countOfWord(searchedText)
                             
-                            print (caption.countOfWord(searchedText))
+                            
+                            if numberOfIteration != 0  {
+                                bestCaptions.append(caption)
+                            }
+                            print (numberOfIteration)
+                            
                         }
                     }
                 }
@@ -153,22 +160,31 @@ if let newToken = refreshToken() {
         })
     }
     
-    bestCaptions = bestCaptions.sorted(by: { (caption1, caption2) -> Bool in
-        caption1.countOfWord(searchedText) > caption2.countOfWord(searchedText)
-        
-    })
+    bestCaptions = bestCaptions
+        .filter({caption -> Bool in caption.countOfWord(searchedText) != 0})
+        .sorted(by: { (caption1, caption2) -> Bool in
+            caption1.countOfWord(searchedText) > caption2.countOfWord(searchedText)
+            
+        })
+    let randomCaption = bestCaptions.random()
     
-    print(bestCaptions.first?.videoId ?? "no match")
+    print(randomCaption?.videoId ?? "no match")
     
-    if let punchlines = bestCaptions.first?.subtitlesWithWord(word: searchedText) {   // extraction des sous-titres contenant le mot cherché dans le premier Caption de bestCaptions
+    if let punchlines = randomCaption?.subtitlesWithWord(word: searchedText) {   // extraction des sous-titres contenant le mot cherché dans un Caption random de bestCaptions
         
-       print(getYoutubeGif(videoId: (bestCaptions.first?.videoId)!, startDate: (punchlines.first?.startDateNumber())!, endDate: (punchlines.first?.endDateNumber())!, captionText: (punchlines.first?.text)!))  //getyoutubeGif sur la première "punchline"
-        
-
-        print(getYoutubeGif(videoId: (bestCaptions.first?.videoId)!, startDate: (punchlines.last?.startDateNumber())!, endDate: (punchlines.last?.endDateNumber())!, captionText: (punchlines.last?.text)!)) //getyoutubeGif sur la dernière "punchline"
+        if punchlines.count != 0 {
+            
+            let randomPunchline = punchlines.random()
+            
+            print("https://gfycat.com/gifs/detail/" + getYoutubeGif(videoId: (randomCaption!.videoId), startDate: (randomPunchline?.startDateNumber())!, endDate: (randomPunchline?.endDateNumber())!, captionText: (punchlines.first?.text)!))  //getyoutubeGif sur une "punchline" random
+            
+            // print(getYoutubeGif(videoId: (bestCaptions.first?.videoId)!, startDate: (punchlines.last?.startDateNumber())!, endDate: (punchlines.last?.endDateNumber())!, captionText: (punchlines.last?.text)!)) //getyoutubeGif sur la dernière "punchline"
+            
+        }
         
         
     }
+    
     
     
     

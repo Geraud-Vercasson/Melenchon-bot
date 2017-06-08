@@ -10,11 +10,11 @@ import Foundation
 import JSON
 
 
-func getYoutubeGif (videoId: String, startDate: Double, endDate: Double, captionText: String = "") -> String {
+func getYoutubeGif (videoId: String, startDate: Double=0, endDate: Double=0, captionText: String = "") -> String {
     
     do {
         
-        let duration = endDate - startDate
+        let duration = (endDate - startDate) 
         var text = captionText
         
         

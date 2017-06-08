@@ -20,6 +20,11 @@ extension Array {
         
         return nil
         }
+    
+    public func random() -> Iterator.Element? {
+        
+        return self.isEmpty ? nil : self[Int(arc4random_uniform(UInt32(self.endIndex)))]
+    }
     }
 
 
