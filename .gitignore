@@ -5,3 +5,5 @@
 Melenchon_bot/.build
 Melenchon_bot/Melenchon_bot.xcodeproj
 GoogleConfig.swift
+.swift-version
+Procfile
