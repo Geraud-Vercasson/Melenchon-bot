@@ -10,7 +10,7 @@ import Foundation
 import JSON
 
 
-func getYoutubeGif (videoId: String, startDate: Double=0, endDate: Double=0, captionText: String = "") -> String {
+func getYoutubeGif (videoId: String, startDate: Double=0, endDate: Double=0, captionText: String = "") -> (idGif: String, gfyToken: String)? {
     
     do {
         
@@ -57,20 +57,21 @@ func getYoutubeGif (videoId: String, startDate: Double=0, endDate: Double=0, cap
                     
                     let gifPost = try drop.client.post("https://api.gfycat.com/v1/gfycats",["Authorization" : "Bearer " + accessToken, "Content-Type" : "application/json"],gifJson)
                     
-                    if let bodyBytes = gifPost.body.bytes, let responseJson = try? JSON(bytes: bodyBytes) {
+                 
+                    if let bodyBytes = gifPost.body.bytes, let responseJson = try? JSON(bytes: bodyBytes), let gfyname = (responseJson["gfyname"]?.string) {
+                        return (idGif: gfyname, gfyToken: accessToken)
                         
-                        return (responseJson["gfyname"]?.string) ?? "error"
                     }
                     
                 }
             }
-            
+        
         }
     catch {
         // will print error catched in try calls
         print("error")
     }
-    return "error"
+    return nil
 }
 
 

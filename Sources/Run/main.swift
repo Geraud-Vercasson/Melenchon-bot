@@ -40,13 +40,50 @@ let tfmt = "srt"
 let config = try Config()
 try config.setup()
 let drop = try Droplet(config)
-
+let queue =  DispatchQueue(label: "waiting for encoding")
 
 
 // Declaring Methods
 
+func getStatus(gfyToken: String, gfycatId: String) -> String? {
+    do {
+        let response = try drop.client.get("https://api.gfycat.com/v1/gfycats/fetch/status/" + gfycatId,
+                                           query: [:], ["Authorization" : "Bearer " + gfyToken, "Content-Type" : "application/json"])
+        
+        if let bodyBytes = response.body.bytes, let json = try? JSON(bytes: bodyBytes) {
+            return json["task"]?.string
+        }
+        
+    } catch {
+        // will print error catched in try calls
+        print(error)
+    }
+    return nil
+}
 
-
+func tryUntilIsComplete(gfyToken: String, gfycatId: String, channel: String) {
+    
+    queue.asyncAfter(deadline: .now() + 10, execute:  {
+        
+        if let status = getStatus(gfyToken: gfyToken, gfycatId: gfycatId) {
+            if status == "complete" {
+                print("\n\n\n🎁🎁🎁\nhttp://gfycat.com/\(gfycatId)\n🎁🎁🎁\n\n\n")
+                print("\n\n\n🎁🎁🎁\nhttps://thumbs.gfycat.com/\(gfycatId)-size_restricted.gif\n🎁🎁🎁\n\n\n")
+                
+                let reaction = "https://thumbs.gfycat.com/\(gfycatId)-size_restricted.gif"
+                
+                bot.webAPI?.sendMessage(channel: channel, text: reaction, success: nil, failure: nil)
+                
+            } else if status == "encoding" {
+                print("\n😒 video is encoding\n")
+                tryUntilIsComplete(gfyToken: gfyToken, gfycatId: gfycatId, channel: channel)
+            } else {
+                print("\n\n💥 There is no video !\n\n")
+                
+            }
+        }
+    })
+}
 // Call methods
 
 let bot = SlackKit()
@@ -71,12 +108,12 @@ bot.notificationForEvent(.message) {(event, client) in
     if let newToken = refreshYoutubeToken(), var searchedText: String = event.message?.text, let channel = message.channel {
         Access_token = newToken
         
-            searchedText.removeSubrange(searchedText.startIndex...searchedText.characters.index(of: " ")!)
+        searchedText.removeSubrange(searchedText.startIndex...searchedText.characters.index(of: " ")!)
         
-            while searchedText.characters[searchedText.startIndex] == " " {
-                
-                searchedText.remove(at: searchedText.startIndex)
-
+        while searchedText.characters[searchedText.startIndex] == " " {
+            
+            searchedText.remove(at: searchedText.startIndex)
+            
         }
         
         
@@ -118,32 +155,33 @@ bot.notificationForEvent(.message) {(event, client) in
                 caption1.countOfWord(searchedText) > caption2.countOfWord(searchedText)
                 
             })
-        let randomCaption = bestCaptions.random()
-        
-        print(randomCaption?.videoId ?? "no match")
-        
-        if let punchlines = randomCaption?.subtitlesWithWord(word: searchedText) {   // extraction des sous-titres contenant le mot cherché dans un Caption random de bestCaptions
+        if let randomCaption = bestCaptions.random() {
             
-            if punchlines.count != 0 {
+            print(randomCaption.videoId)
+            
+            let punchlines = randomCaption.subtitlesWithWord(word: searchedText)   // extraction des sous-titres contenant le mot cherché dans un Caption random de bestCaptions
+            
+            if let randomPunchline = punchlines.random(), let gfyResponse = getYoutubeGif(videoId: (randomCaption.videoId), startDate: randomPunchline.startDateNumber(), endDate: randomPunchline.endDateNumber(), captionText: randomPunchline.text){
                 
-                let randomPunchline = punchlines.random()
                 
-                let reaction = "https://thumbs.gfycat.com/" + getYoutubeGif(videoId: (randomCaption!.videoId), startDate: (randomPunchline?.startDateNumber())!, endDate: (randomPunchline?.endDateNumber())!, captionText: (punchlines.first?.text)! + "-size_restricted.gif")  //getyoutubeGif sur une "punchline" random
+                let gfycatID = "https://thumbs.gfycat.com/" + gfyResponse.idGif + "-size_restricted.gif"//getyoutubeGif sur une "punchline" random
                 
-                // print(getYoutubeGif(videoId: (bestCaptions.first?.videoId)!, startDate: (punchlines.last?.startDateNumber())!, endDate: (punchlines.last?.endDateNumber())!, captionText: (punchlines.last?.text)!)) //getyoutubeGif sur la dernière "punchline"
+                tryUntilIsComplete(gfyToken: gfyResponse.gfyToken, gfycatId: gfyResponse.idGif, channel: channel)
                 
-                bot.webAPI?.sendMessage(channel: channel, text: reaction, success: nil, failure: nil)
+                
                 return
             }
             
             
         }
-        
         bot.webAPI?.addReaction(name: "Pardon?", channel: channel, timestamp: message.ts, success: nil, failure: nil)
         return
     }
     
+    
 }
+
+
 
 
 // Start HTTP Server with no routes
