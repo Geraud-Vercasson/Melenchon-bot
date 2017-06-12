@@ -7,3 +7,4 @@ Melenchon_bot/Melenchon_bot.xcodeproj
 GoogleConfig.swift
 .swift-version
 Procfile
+bot-config.json
