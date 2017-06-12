@@ -13,10 +13,10 @@ func refreshYoutubeToken() -> String? {
     do {
         let response = try drop.client.post("https://www.googleapis.com/oauth2/v4/token",
                                             query: [
-                                                "client_id": Client_id,
+                                                "client_id": clientId,
                                                 "grant_type": "refresh_token",
-                                                "client_secret": Client_secret,
-                                                "refresh_token": Refresh_token],
+                                                "client_secret": clientSecret,
+                                                "refresh_token": refreshToken],
                                             ["Content-Type":" application/x-www-form-urlencoded"])
         
         if let bodyBytes = response.body.bytes, let json = try? JSON(bytes: bodyBytes) {
@@ -36,9 +36,9 @@ func getCaption(id: String) -> String? {
     do {
         let response = try drop.client.get("https://www.googleapis.com/youtube/v3/captions/" + id,
                                            query: [
-                                            "key": API_Key,
+                                            "key": apiKey,
                                             "tfmt":tfmt],
-                                           ["authorization":"Bearer " + Access_token])
+                                           ["authorization":"Bearer " + accessToken])
         
         if let bodyBytes = response.body.bytes, let captionString = String(bytes: bodyBytes, encoding: .utf8) {
             
@@ -59,9 +59,9 @@ func getCaptionIds(videoId: String) -> [String]? {
                                            query: [
                                             "videoId":videoId,
                                             "part":"id",
-                                            "key": API_Key,
+                                            "key": apiKey,
                                             ],
-                                           ["authorization":"Bearer " + Access_token])
+                                           ["authorization":"Bearer " + accessToken])
         
         if let bodyBytes = response.body.bytes, let json = try? JSON(bytes: bodyBytes) {
             
@@ -84,7 +84,7 @@ func getVideoIds(search: String, maxResults: Int = 20) -> [String]? {
                                            query: [
                                             "q":search,
                                             "part":"snippet",
-                                            "key": API_Key,
+                                            "key": apiKey,
                                             "maxResults":maxResults,
                                             "type":"video",
                                             "videoCaption":"closedCaption"

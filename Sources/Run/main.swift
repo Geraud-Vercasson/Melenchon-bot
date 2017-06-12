@@ -24,20 +24,34 @@ import Foundation
 
 
 // Declaring vars
-//  let Client_id = ""
-//  let Client_secret = ""
-//  let Refresh_token = ""
-//  let API_Key = ""
-//  var Access_token = ""
+
+
+let config = try Config(prioritized: [.directory(root: workingDirectory + "../Config/")])
+print(workingDirectory + "../Config/")
+
+let clientId = config["bot-config", "clientId"]!.string!
+    let clientSecret = config["bot-config", "clientSecret"]!.string!
+    let refreshToken = config["bot-config", "refreshToken"]!.string!
+    let apiKey = config["bot-config", "apiKey"]!.string!
+    let slackBotToken = config["bot-config", "slackBotToken"]!.string!
+    let gfycatClientId = config["bot-config", "gfycatClientId"]!.string!
+    let gfycatClientSecret = config["bot-config", "gfycatClientSecret"]!.string!
+
+    var accessToken = ""
+
+//  let clientId = ""
+//  let clientSecret = ""
+//  let refreshToken = ""
+//  let apiKey = ""
+//  var accessToken = ""
 //  let gfycatClientId = ""
 //  let gfycatClientSecret = ""
-//   let slackBotToken = ""
+//  let slackBotToken = ""
 
 let tfmt = "srt"
 
-
 // Instantiate a Drop
-let config = try Config()
+//let config = try Config()
 try config.setup()
 let drop = try Droplet(config)
 let queue =  DispatchQueue(label: "waiting for encoding")
@@ -106,7 +120,7 @@ bot.notificationForEvent(.message) {(event, client) in
     
     
     if let newToken = refreshYoutubeToken(), var searchedText: String = event.message?.text, let channel = message.channel {
-        Access_token = newToken
+        accessToken = newToken
         
         searchedText.removeSubrange(searchedText.startIndex...searchedText.characters.index(of: " ")!)
         

@@ -1,3 +1,48 @@
 {
-	"foo": "foo-bar"
+    "name": "melenchonbot",
+    "description": "A template for starting a SlackBot with Vapor. Say 'hello' to your bot in Slack after building.",
+    "logo": "",
+    "repository": "",
+    "keywords": ["swift", "vapor", "slack"],
+    "env": {
+        "clientId": {
+            "description": "",
+            "required": true
+        },
+        "clientSecret": {
+            "description": "",
+            "required": true
+        },
+        "refreshToken": {
+            "description": "",
+            "required": true
+        },
+        "apiKey": {
+            "description": "",
+            "required": true
+        },
+        "gfycatClientId": {
+            "description": "",
+            "required": true
+        },
+        "gfycatClientSecret": {
+            "description": "",
+            "required": true
+        },
+        "slackBotToken": {
+            "description": "",
+            "required": true
+        }
+        
+        
+    },
+    "formation": {
+    },
+    "addons": [
+    ],
+    "buildpacks": [
+                   {
+                   "url": "https://github.com/kylef/heroku-buildpack-swift"
+                   }
+                   ]
 }
