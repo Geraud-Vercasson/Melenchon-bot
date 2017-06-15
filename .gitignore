@@ -5,3 +5,4 @@
 Melenchon_bot/.build
 Melenchon_bot/Melenchon_bot.xcodeproj
 bot-config.json
+.swift-version
