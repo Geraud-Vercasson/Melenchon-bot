@@ -1,0 +1,1 @@
+worker: melenchonbot --config:bot-config.clientId=$clientId bot-config.clientSecret=$clientSecret config.refreshToken=$refreshToken config.apiKey=$apiKey  config.gfycatClientId=$gfycatClientId config.gfycatClientSecret=$gfycatClientSecret config.slackbotToken=$slackbotToken

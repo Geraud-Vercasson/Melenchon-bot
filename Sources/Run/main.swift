@@ -119,23 +119,40 @@ bot.notificationForEvent(.message) {(event, client) in
     
     
     
-    if let newToken = refreshYoutubeToken(), var searchedText: String = event.message?.text, let channel = message.channel {
+    if let newToken = refreshYoutubeToken(), var messageText: String = event.message?.text, let channel = message.channel {
         accessToken = newToken
         
-        searchedText.removeSubrange(searchedText.startIndex...searchedText.characters.index(of: " ")!)
+        messageText.removeSubrange(messageText.startIndex...messageText.characters.index(of: " ")!)
         
-        while searchedText.characters[searchedText.startIndex] == " " {
+        while messageText.characters[messageText.startIndex] == " " {
             
-            searchedText.remove(at: searchedText.startIndex)
+            messageText.remove(at: messageText.startIndex)
+            
+        }
+        
+        
+        var searchedVideo: String
+        var searchedText: String
+        
+        if messageText.contains("/find") {
+            
+            messageText.removeSubrange(messageText.startIndex...messageText.characters.index(of: " ")!)
+            searchedText = messageText.components(separatedBy: "in").first?.replacingOccurrences(of: " ", with: "") ?? ""
+            searchedVideo = messageText.components(separatedBy: "in").last?.replacingOccurrences(of: " ", with: "") ?? ""
+
+
+            
+        } else {
+            
+            searchedText = messageText
+            searchedVideo = messageText
             
         }
         
         
         
-        
-        
         var bestCaptions = [Caption]()
-        if let videoIdArray = getVideoIds(search: searchedText,maxResults: 10){
+        if let videoIdArray = getVideoIds(search: searchedVideo,maxResults: 10){
             
             videoIdArray.forEach({ (my_videoId) in
                 
