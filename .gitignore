@@ -4,5 +4,6 @@
 /*.xcodeproj
 Melenchon_bot/.build
 Melenchon_bot/Melenchon_bot.xcodeproj
-GoogleConfig.swift
 bot-config.json
+.swift-version
+
